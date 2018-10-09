@@ -339,6 +339,10 @@ void OpenSimContext::updateMarkerSet(Model& model, MarkerSet& aMarkerSet) {
    recreateSystemKeepStage();
 }
 
+void OpenSimContext::removeMarker(Marker* markerToRemove) {
+    _model->upd_MarkerSet().remove(markerToRemove);
+    recreateSystemKeepStage();
+}
 // Analyses
 int OpenSimContext::step(Analysis& analysis)
 {

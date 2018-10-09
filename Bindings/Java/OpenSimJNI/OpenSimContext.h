@@ -168,7 +168,7 @@ public:
     // Markers
     void setBody(Marker& currentMarker, PhysicalFrame& newBody, bool  b);
     void updateMarkerSet(Model& model, MarkerSet& aMarkerSet);
-
+    void removeMarker(Marker*  marker);
     void getCenterOfMassInGround(double com[3]) const {
         SimTK::Vec3 comV = _model->getMatterSubsystem().calcSystemMassCenterLocationInGround(*_configState);
         for(int i=0; i<3; i++) com[i] = comV[i];

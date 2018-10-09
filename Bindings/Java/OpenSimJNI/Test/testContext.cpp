@@ -44,6 +44,7 @@
 #include <OpenSim/Simulation/Model/ForceSet.h>
 #include <OpenSim/Common/LoadOpenSimLibrary.h>
 #include <OpenSim/Actuators/Thelen2003Muscle.h>
+#include <OpenSim/Auxiliary/auxiliaryTestFunctions.h>
 
 using namespace OpenSim;
 using namespace SimTK;
@@ -61,10 +62,6 @@ int main()
     // To Retrace the steps taken by the GUI this test case follows the same call sequence:
     // new Model(file)
     // new OpenSimContext(model.initSystem(), model);
-    // context.updateDisplayer(muscle)  // to display muscles
-    // context.getCurrentPath(muscle)
-    // context.getTransform(body)
-    // context.transformPosition(body, loc, global)  // to display markers
     // context.getLocked(Coordinate)
     // context.getValue(cooridnate)
     LoadOpenSimLibrary("osimActuators");
@@ -89,6 +86,22 @@ int main()
     SimTK::State stateCopy = context->getCurrentStateCopy();
     assert(context->getCurrentStateRef().toString()==stateCopy.toString());
 
+    // traverse markers
+    ComponentList<const Marker>& markersList = model->getComponentList<const Marker>();
+    int numMarkers = 0;
+    for (ComponentList<Marker>::const_iterator
+        it = markersList.begin(); it != markersList.end(); ++it) {
+        cout << "Iterator is at Marker: " << it->getAbsolutePathString() << endl;
+        numMarkers++;
+    }
+    ASSERT(numMarkers == 3);
+    Marker& markerToRemove = model->updComponent<Marker>("/arm26/markerset/r_acromion");
+    context->removeMarker(&markerToRemove);
+    ComponentList<const Marker>& markersListAfter = model->getComponentList<const Marker>();
+    for (ComponentList<Marker>::const_iterator
+        it = markersListAfter.begin(); it != markersListAfter.end(); ++it) {
+        cout << "Iterator is at Marker: " << it->getName() << endl;
+    }
     Array<std::string> stateNames = model->getStateVariableNames();
     OpenSim::Force* dForce=&(model->updForceSet().get("TRIlong"));
     Muscle* dTRIlong = dynamic_cast<Muscle*>(dForce);
